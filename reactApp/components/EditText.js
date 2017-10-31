@@ -169,14 +169,16 @@ class EditText extends React.Component {
           {this.saveBotton({icon: 'format_save'})}
 
         </div>
-        <div className="editbox">
-          <Editor
-            ref="editor"
-            blockRenderMap={myBlockTypes}
-            customStyleMap={this.state.inlineStyles}
-            onChange={this.onChange.bind(this)}
-            editorState={this.state.editorState}
-          />
+        <div className="container">
+          <div className="editbox">
+            <Editor
+              ref="editor"
+              blockRenderMap={myBlockTypes}
+              customStyleMap={this.state.inlineStyles}
+              onChange={this.onChange.bind(this)}
+              editorState={this.state.editorState}
+            />
+          </div>
         </div>
     </div>
     );

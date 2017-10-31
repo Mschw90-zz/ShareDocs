@@ -1,6 +1,8 @@
 .toolbar {
   border-bottom: 2px solid gray;
   padding: 10px;
+  display: flex;
+  justify-content: center;
 }
 
 .toolbar > * {
@@ -15,8 +17,17 @@
   text-align: center;
 }
 
+.container {
+  display: flex;
+  justify-content: center;
+}
+
 .editbox {
   margin-top: 20px;
-  min-height: 400px;
+  min-height: 500px;
+  width: 80%;
   border: 1px solid black;
+  -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.32);
+  -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.32);
+  box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.32);
 }
