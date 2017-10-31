@@ -1,0 +1,22 @@
+.toolbar {
+  border-bottom: 2px solid gray;
+  padding: 10px;
+}
+
+.toolbar > * {
+  margin-right: 5px;
+}
+
+.right-align {
+  text-align: right;
+}
+
+.center-align {
+  text-align: center;
+}
+
+.editbox {
+  margin-top: 20px;
+  min-height: 400px;
+  border: 1px solid black;
+}
