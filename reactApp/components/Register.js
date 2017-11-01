@@ -1,7 +1,7 @@
 import React from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-
+import axios from 'axios';
 
 class Register extends React.Component {
   constructor(props) {
@@ -10,6 +10,25 @@ class Register extends React.Component {
 
     };
   }
+
+  register() {
+    axios.post("http://localhost:3000/register", {
+      username: this.refs.username,
+      password: this.refs.password,
+    }, {
+      withCredentials: true
+    })
+    .then((resp) => {
+      if (resp.data.success) {
+        this.props.history.push('/login');
+        console.log("success!");
+      } else {
+        console.log(resp.data.error);
+      }
+    })
+    .catch((err) => console.log(err));
+  }
+
   render() {
     const style = {
       margin: 12,
@@ -17,28 +36,22 @@ class Register extends React.Component {
 
     return (
       <div className="imgback">
-        <h1 className="header2">HORIZON DOCS</h1>
         <div className="registerPage">
+          <h1>HORIZON DOCS</h1>
           <TextField
-            hintText="User Name"
+            // hintText="User Name"
             floatingLabelText="User Name"
+            ref="username"
           /><br />
           <TextField
-            hintText="First Name"
-            floatingLabelText="First Name"
-          /><br />
-          <TextField
-            hintText="Last Name"
-            floatingLabelText="Last Name"
-          /><br />
-          <TextField
-            hintText="Password"
+            // hintText="Password"
             floatingLabelText="Password"
             type="password"
+            ref="password"
           /><br />
           <div>
-            <RaisedButton label="Sign Up" secondary={true} style={style} />
-            <RaisedButton label="Sign In" primary={true} style={style} />
+            <RaisedButton label="Sign Up" primary={true} style={style} onClick={() => this.register()}/>
+            <RaisedButton label="Login" secondary={true} style={style} onClick={() => this.props.history.push('/')}/>
           </div>
         </div>
       </div>

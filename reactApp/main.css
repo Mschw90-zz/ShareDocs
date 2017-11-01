@@ -93,7 +93,8 @@ video{
   background-color: white;
   opacity: .9;
   align-self: center;
-  width: 25%;
+  /*width: 25%;*/
+  padding: 10px;
 }
 
 .imgback {
