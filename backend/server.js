@@ -16,7 +16,9 @@ app.use(session({
   store: new MongoStore({
     mongooseConnection: mongoose.connection
   })
-}));passport.serializeUser(function(user, done) {
+}));
+
+passport.serializeUser(function(user, done) {
   done(null, user._id);
 });
 

@@ -9,6 +9,7 @@ import Popover from 'material-ui/Popover';
 import { Map } from 'immutable';
 import IconButton from 'material-ui/IconButton';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import FlatButton from 'material-ui/FlatButton';
 
 const myBlockTypes = DefaultDraftBlockRenderMap.merge(new Map({
   center: {
@@ -159,6 +160,7 @@ class EditText extends React.Component {
         <AppBar
           iconElementLeft={<IconButton><NavigationClose /></IconButton>}
           onLeftIconButtonTouchTap={() => this.props.history.push('/')}
+          iconElementRight={<FlatButton label="Save" />}
           title="May Docs"
          />
         <div className="toolbar">
@@ -172,7 +174,7 @@ class EditText extends React.Component {
           {this.formatButton({icon: 'format_align_right ', style: 'right', block: true})}
           {this.increaseFontSize(false)}
           {this.increaseFontSize(true)}
-          {this.saveBotton({icon: 'format_save'})}
+          {/* {this.saveBotton({icon: 'format_save'})} */}
 
         </div>
         <div className="container">
