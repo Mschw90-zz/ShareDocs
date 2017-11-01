@@ -3,8 +3,8 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
 import {List, ListItem} from 'material-ui/List';
-import ActionInfo from 'material-ui/svg-icons/action/info';
-// import Divider from 'material-ui/Divider';
+// import ActionInfo from 'material-ui/svg-icons/action/info';
+import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
 // import FileFolder from 'material-ui/svg-icons/file/folder';
@@ -45,7 +45,7 @@ class DocPage extends React.Component {
               Document: e.target.value
             })}
           />
-          <RaisedButton label="Primary" primary={true} style={button} /><br />
+          <RaisedButton label="New Doc" primary={true} style={button} /><br />
           <TextField
             floatingLabelText="Document ID"
             value={this.state.DocumentID}
@@ -53,18 +53,22 @@ class DocPage extends React.Component {
               DocumentID: e.target.value
             })}
           />
-          <RaisedButton label="Primary" primary={true} style={button} /><br />
+          <RaisedButton label="Doc ID" primary={true} style={button} /><br />
           <div>
             <List>
               <Subheader inset={true}>Documents</Subheader>
+              <Divider />
               <ListItem
                 leftAvatar={<Avatar icon={<ActionAssignment />} backgroundColor={blue500} />}
-                // rightIcon={<ActionInfo />}
                 primaryText="Vacation itinerary"
               />
+              <Divider />
             </List>
           </div>
         </Paper>
+        <div className="logout">
+          <RaisedButton label="Sign Out" primary={true} style={button} onClick={() => this.props.history.push('/')}/>
+        </div>
       </div>
     );
   }

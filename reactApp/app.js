@@ -35,10 +35,9 @@ class App extends React.Component {
 }
 
 ReactDOM.render(
-  // <HashRouter>
+  <HashRouter>
     <MuiThemeProvider>
-      {/* <App/> */}
-      <DocPage />
-    </MuiThemeProvider>,
-  // </HashRouter>,
+      <App/>
+    </MuiThemeProvider>
+  </HashRouter>,
    document.getElementById('root'));
