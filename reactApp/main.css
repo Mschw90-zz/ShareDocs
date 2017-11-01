@@ -110,3 +110,8 @@ video{
   align-self: center;
   margin-bottom: 40px;
 }
+
+.docPage {
+  display: flex;
+  justify-content: center
+}

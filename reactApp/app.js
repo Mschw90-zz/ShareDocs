@@ -6,6 +6,8 @@ import {Route, HashRouter} from "react-router-dom";
 import Register from './components/Register';
 import EditText from './components/EditText';
 import Login from './components/Login';
+import DocPage from './components/DocPage';
+
 
 /* This can check if your electron app can communicate with your backend */
 // fetch('http://localhost:3000')
@@ -26,15 +28,17 @@ class App extends React.Component {
         <Route path='/' exact component={Login} />
         <Route path='/register' exact component={Register} />
         <Route path='/editText' exact component={EditText} />
+        <Route path='/docPage' exact component={DocPage} />
       </div>
     );
   }
 }
 
 ReactDOM.render(
-  <HashRouter>
+  // <HashRouter>
     <MuiThemeProvider>
-      <App/>
-    </MuiThemeProvider>
-  </HashRouter>,
+      {/* <App/> */}
+      <DocPage />
+    </MuiThemeProvider>,
+  // </HashRouter>,
    document.getElementById('root'));
