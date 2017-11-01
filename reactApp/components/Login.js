@@ -8,19 +8,21 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      username: '',
+      password: '',
     };
   }
 
   login () {
-    axios.post("http://localhost:3000/register", {
-      username: this.refs.username,
-      password: this.refs.password,
+    axios.post("http://localhost:3000/login", {
+      username: this.state.username,
+      password: this.state.password,
     }, {
       withCredentials: true
     })
     .then((resp) => {
       if (resp.data.success) {
+        this.props.history.push('/editText');
         console.log("success!", resp.data.user);
       } else {
         console.log(resp.data.error);
@@ -35,7 +37,6 @@ class Login extends React.Component {
     };
 
 
-    console.log("anything");
     return (
       <div className="videoBackground">
         <video autoPlay loop id="video-background" height="100%" width="auto">
@@ -45,13 +46,19 @@ class Login extends React.Component {
             <div className="loginBox">
               <div><h1>HORIZON DOCS</h1></div>
               <TextField
-                // hintText="User Name"
                 floatingLabelText="User Name"
+                value={this.state.username}
+                onChange={(e) => this.setState({
+                  username: e.target.value
+                })}
               /><br />
               <TextField
-                // hintText="Password"
                 floatingLabelText="Password"
                 type="password"
+                value={this.state.password}
+                onChange={(e) => this.setState({
+                  password: e.target.value
+                })}
               /><br />
                 <RaisedButton label="Sign In" primary={true} style={style} onClick={() => this.login()}/>
                 <RaisedButton label="Register" secondary={true} style={style} onClick={() => this.props.history.push('/register')} />
