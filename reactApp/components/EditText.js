@@ -7,6 +7,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { CirclePicker } from 'react-color';
 import Popover from 'material-ui/Popover';
 import { Map } from 'immutable';
+import IconButton from 'material-ui/IconButton';
+import NavigationClose from 'material-ui/svg-icons/navigation/close';
 
 const myBlockTypes = DefaultDraftBlockRenderMap.merge(new Map({
   center: {
@@ -154,7 +156,11 @@ class EditText extends React.Component {
   render() {
     return (
       <div>
-        <AppBar title="May Docs" />
+        <AppBar
+          iconElementLeft={<IconButton><NavigationClose /></IconButton>}
+          onLeftIconButtonTouchTap={() => this.props.history.push('/')}
+          title="May Docs"
+         />
         <div className="toolbar">
           {this.formatButton({icon: 'format_bold', style: 'BOLD'})}
           {this.formatButton({icon: 'format_italic', style: 'ITALIC'})}
