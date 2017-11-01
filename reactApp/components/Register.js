@@ -7,6 +7,8 @@ class Register extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      firstName: '',
+      lastName: '',
       username: '',
       password: '',
     };
@@ -14,6 +16,8 @@ class Register extends React.Component {
 
   register() {
     axios.post("http://localhost:3000/register", {
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
       username: this.state.username,
       password: this.state.password,
     }, {
@@ -39,6 +43,24 @@ class Register extends React.Component {
       <div className="imgback">
         <div className="registerPage">
           <h1>HORIZON DOCS</h1>
+          <TextField
+            // hintText="User Name"
+            floatingLabelText="First Name"
+            ref="firstName"
+            value={this.state.firstName}
+            onChange={(e) => this.setState({
+              firstName: e.target.value
+            })}
+          /><br />
+          <TextField
+            // hintText="User Name"
+            floatingLabelText="Last Name"
+            ref="lastName"
+            value={this.state.lastName}
+            onChange={(e) => this.setState({
+              lastName: e.target.value
+            })}
+          /><br />
           <TextField
             // hintText="User Name"
             floatingLabelText="User Name"
