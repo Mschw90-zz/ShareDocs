@@ -1,5 +1,5 @@
 import React from 'react';
-import { Editor, EditorState, RichUtils, DefaultDraftBlockRenderMap } from 'draft-js';
+import { Editor, EditorState, RichUtils, DefaultDraftBlockRenderMap, convertFromRaw, convertToRaw } from 'draft-js';
 import * as colors from 'material-ui/styles/colors';
 import AppBar from 'material-ui/AppBar';
 import FontIcon from 'material-ui/FontIcon';
@@ -7,6 +7,10 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { CirclePicker } from 'react-color';
 import Popover from 'material-ui/Popover';
 import { Map } from 'immutable';
+import IconButton from 'material-ui/IconButton';
+import NavigationClose from 'material-ui/svg-icons/navigation/close';
+const io = require('socket.io-client');
+import FlatButton from 'material-ui/FlatButton'
 
 const myBlockTypes = DefaultDraftBlockRenderMap.merge(new Map({
   center: {
@@ -25,7 +29,12 @@ class EditText extends React.Component {
       currentFontSize: 12,
       inlineStyles: {}
     };
+    // this.socket = io('http://localhost:3000');
   }
+
+
+
+
 
   onChange(editorState) {
     this.setState({
@@ -49,13 +58,13 @@ class EditText extends React.Component {
   formatButton({icon, style, block}) {
     return(
       <RaisedButton
-        backgroundColor={
-          this.state.editorState.getCurrentInlineStyle().has(style) ?
-          colors.pink100 :
-          colors.pinkA200
-        }
-        onMouseDown={(e) => this.toggleFormat(e,  style, block)}
-        icon={<FontIcon className="material-icons">{icon}</FontIcon>}
+      backgroundColor={
+        this.state.editorState.getCurrentInlineStyle().has(style) ?
+        colors.pink100 :
+        colors.pinkA200
+      }
+      onMouseDown={(e) => this.toggleFormat(e,  style, block)}
+      icon={<FontIcon className="material-icons">{icon}</FontIcon>}
       />
     );
   }
@@ -95,21 +104,21 @@ class EditText extends React.Component {
   colorPicker() {
     return(
       <div style={{display: 'inline-block'}}>
-        <RaisedButton
-          backgroundColor={colors.pinkA200}
-          icon={<FontIcon className="material-icons">format_paint</FontIcon>}
-          onClick={this.openColorPicker.bind(this)}
-        />
-        <Popover
-            open={this.state.colorPickerOpen}
-            anchorEl={this.state.colorPickerButton}
-            anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-            targetOrigin={{horizontal: 'left', vertical: 'top'}}
-            onRequestClose={this.closeColorPicker.bind(this)}
-            >
-            <CirclePicker onChangeComplete={this.formatColor.bind(this)} />
-        </Popover>
-    </div>
+      <RaisedButton
+      backgroundColor={colors.pinkA200}
+      icon={<FontIcon className="material-icons">format_paint</FontIcon>}
+      onClick={this.openColorPicker.bind(this)}
+      />
+      <Popover
+      open={this.state.colorPickerOpen}
+      anchorEl={this.state.colorPickerButton}
+      anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+      targetOrigin={{horizontal: 'left', vertical: 'top'}}
+      onRequestClose={this.closeColorPicker.bind(this)}
+      >
+      <CirclePicker onChangeComplete={this.formatColor.bind(this)} />
+      </Popover>
+      </div>
     );
   }
 
@@ -134,53 +143,140 @@ class EditText extends React.Component {
   increaseFontSize(shrink) {
     return(
       <RaisedButton
-        backgroundColor={colors.pinkA200}
-        onClick={() => this.applyIncreaseFrontSize(shrink)}
-        icon={<FontIcon className="material-icons">{shrink ? "zoom_out": "zoom_in"}</FontIcon>}
+      backgroundColor={colors.pinkA200}
+      onClick={() => this.applyIncreaseFrontSize(shrink)}
+      icon={<FontIcon className="material-icons">{shrink ? "zoom_out": "zoom_in"}</FontIcon>}
       />
     );
   }
 
-  saveBotton () {
-    return (
-      <RaisedButton
-        backgroundColor={colors.pinkA200}
-        // onMouseDown={(e) => this.toggleFormat(e,  style, block)}
-        icon={<FontIcon className="material-icons">save</FontIcon>}
-      />
-    );
+
+  componentDidMount() {
+    // load document content and title (owner ? register with names?)
+
+    const docId = this.props.match.params.dochash;
+
+    fetch(`http://localhost:3000/getdocument/${docId}`, {
+      credentials: 'include'
+    })
+    .then(resp => resp.json())
+    .then(resp => {
+      if (resp.success) {
+        const raw = resp.document.content;
+
+        if (raw) {
+          const contentState = convertFromRaw(JSON.parse(raw));
+          this.setState({
+            editorState: EditorState.createWithContent(contentState),
+            title: resp.document.title
+          });
+        } else {
+          this.setState({
+            title: resp.document.title
+          });
+        }
+
+      } else {
+        this.setState({ error: resp.error.errmsg});
+      }
+    })
+    .catch(err => { throw err });
   }
+
+  componentWillUnmount() {
+    this.socket.disconnect();
+  }
+
+  saveDoc() {
+    const contentState = this.state.editorState.getCurrentContent();
+    const stringifiedContent = JSON.stringify(convertToRaw(contentState));
+    const docId = this.props.match.params.dochash;
+
+    console.log('MADE IT');
+
+    console.log('this is the docId', docId);
+    fetch(`http://localhost:3000/savedocument/${docId}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ content: stringifiedContent })
+    })
+    .then(resp => resp.json())
+    .then(resp => {
+      if (resp.success) {
+        // successful save
+      } else {
+        throw resp.error;
+      }
+    })
+    .catch(err => { throw err });
+  }
+
+  createDoc(title) {
+    fetch('http://localhost:3000/newdocument', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ title })
+    })
+    .then(resp => resp.json())
+    .then(resp => {
+      if (resp.success) {
+        this.setState({ userDocs: this.state.userDocs.concat(resp.newDoc), error: null });
+      } else {
+        this.setState({ error: resp.error.errmsg})
+      }
+    })
+    .catch(err => { throw err });
+  }
+
 
   render() {
     return (
       <div>
-        <AppBar title="May Docs" />
-        <div className="toolbar">
-          {this.formatButton({icon: 'format_bold', style: 'BOLD'})}
-          {this.formatButton({icon: 'format_italic', style: 'ITALIC'})}
-          {this.formatButton({icon: 'format_underlined', style: 'UNDERLINE'})}
-          {this.colorPicker()}
-          {this.formatButton({icon: 'format_list_numbered ', style: 'ordered-list-item', block: true})}
-          {this.formatButton({icon: 'format_align_left ', style: 'unstyled', block: true})}
-          {this.formatButton({icon: 'format_align_center ', style: 'center', block: true})}
-          {this.formatButton({icon: 'format_align_right ', style: 'right', block: true})}
-          {this.increaseFontSize(false)}
-          {this.increaseFontSize(true)}
-          {this.saveBotton({icon: 'format_save'})}
+      <AppBar
+      iconElementLeft={<IconButton><NavigationClose /></IconButton>}
+      onLeftIconButtonTouchTap={() => this.props.history.push('/')}
+      // iconElementRight={<FlatButton onClick={() => this.saveDoc()} label="Save" />}
+      iconElementRight={<FlatButton onClick={() => this.createDoc(this.refs.docTitle.value)} label="newDoc" />}
 
-        </div>
-        <div className="container">
-          <div className="editbox">
-            <Editor
-              ref="editor"
-              blockRenderMap={myBlockTypes}
-              customStyleMap={this.state.inlineStyles}
-              onChange={this.onChange.bind(this)}
-              editorState={this.state.editorState}
-            />
-          </div>
-        </div>
-    </div>
+      title="May Docs"
+      />
+      <div className="toolbar">
+      {this.formatButton({icon: 'format_bold', style: 'BOLD'})}
+      {this.formatButton({icon: 'format_italic', style: 'ITALIC'})}
+      {this.formatButton({icon: 'format_underlined', style: 'UNDERLINE'})}
+      {this.colorPicker()}
+      {this.formatButton({icon: 'format_list_numbered ', style: 'ordered-list-item', block: true})}
+      {this.formatButton({icon: 'format_align_left ', style: 'unstyled', block: true})}
+      {this.formatButton({icon: 'format_align_center ', style: 'center', block: true})}
+      {this.formatButton({icon: 'format_align_right ', style: 'right', block: true})}
+      {this.increaseFontSize(false)}
+      {this.increaseFontSize(true)}
+      <input
+          ref='docTitle'
+          placeholder="new document title"
+        />
+
+
+
+      </div>
+      <div className="container">
+      <div className="editbox">
+      <Editor
+      ref="editor"
+      blockRenderMap={myBlockTypes}
+      customStyleMap={this.state.inlineStyles}
+      onChange={this.onChange.bind(this)}
+      editorState={this.state.editorState}
+      />
+      </div>
+      </div>
+      </div>
     );
   }
 }

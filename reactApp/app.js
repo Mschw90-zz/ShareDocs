@@ -4,8 +4,8 @@ import { render } from 'react-dom';
 import { HashRouter, Switch, Route } from 'react-router-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Register from './components/Register';
-// import EditText from './components/EditText';
-// import LandingPage from './components/LandingPage';
+import EditText from './components/EditText';
+import Login from './components/Login';
 
 
 // import LandingPage from './components/LandingPage';
@@ -22,14 +22,18 @@ class App extends React.Component {
   render() {
     return(
       <div>
-         <Register />
+        <Route path='/' exact component={Login} />
+        <Route path='/register' exact component={Register} />
+        <Route path='/editText' exact component={EditText} />
       </div>
     );
   }
 };
 
 ReactDOM.render(
-  <MuiThemeProvider>
-    <App/>
-  </MuiThemeProvider>,
+  <HashRouter>
+    <MuiThemeProvider>
+      <App/>
+    </MuiThemeProvider>
+  </HashRouter>,
    document.getElementById('root'));

@@ -13,7 +13,7 @@ const userSchema = new Schema({
     },
     documents: [{
         type: Schema.ObjectId,
-        ref: 'Doc'
+        ref: 'Docs'
     }]
 });
 
