@@ -22,7 +22,7 @@ class Login extends React.Component {
     })
     .then((resp) => {
       if (resp.data.success) {
-        this.props.history.push('/editText');
+        this.props.history.push('/docPage');
         console.log("success!", resp.data);
       } else {
         console.log(resp.data.error);

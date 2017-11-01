@@ -6,6 +6,8 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Register from './components/Register';
 import EditText from './components/EditText';
 import Login from './components/Login';
+import DocPage from './components/DocPage';
+
 
 
 // import LandingPage from './components/LandingPage';
@@ -25,6 +27,7 @@ class App extends React.Component {
         <Route path='/' exact component={Login} />
         <Route path='/register' exact component={Register} />
         <Route path='/editText' exact component={EditText} />
+        <Route path='/docPage' exact component={DocPage} />
       </div>
     );
   }

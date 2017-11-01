@@ -214,69 +214,43 @@ class EditText extends React.Component {
     .catch(err => { throw err });
   }
 
-  createDoc(title) {
-    fetch('http://localhost:3000/newdocument', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ title })
-    })
-    .then(resp => resp.json())
-    .then(resp => {
-      if (resp.success) {
-        this.setState({ userDocs: this.state.userDocs.concat(resp.newDoc), error: null });
-      } else {
-        this.setState({ error: resp.error.errmsg})
-      }
-    })
-    .catch(err => { throw err });
-  }
 
 
   render() {
     return (
       <div>
-      <AppBar
-      iconElementLeft={<IconButton><NavigationClose /></IconButton>}
-      onLeftIconButtonTouchTap={() => this.props.history.push('/')}
-      // iconElementRight={<FlatButton onClick={() => this.saveDoc()} label="Save" />}
-      iconElementRight={<FlatButton onClick={() => this.createDoc(this.refs.docTitle.value)} label="newDoc" />}
+        <AppBar
+          iconElementLeft={<IconButton><NavigationClose /></IconButton>}
+          onLeftIconButtonTouchTap={() => this.props.history.push('/')}
+          iconElementRight={<FlatButton label="Save" />}
+          title="May Docs"
+         />
+        <div className="toolbar">
+          {this.formatButton({icon: 'format_bold', style: 'BOLD'})}
+          {this.formatButton({icon: 'format_italic', style: 'ITALIC'})}
+          {this.formatButton({icon: 'format_underlined', style: 'UNDERLINE'})}
+          {this.colorPicker()}
+          {this.formatButton({icon: 'format_list_numbered ', style: 'ordered-list-item', block: true})}
+          {this.formatButton({icon: 'format_align_left ', style: 'unstyled', block: true})}
+          {this.formatButton({icon: 'format_align_center ', style: 'center', block: true})}
+          {this.formatButton({icon: 'format_align_right ', style: 'right', block: true})}
+          {this.increaseFontSize(false)}
+          {this.increaseFontSize(true)}
+          {/* {this.saveBotton({icon: 'format_save'})} */}
 
-      title="May Docs"
-      />
-      <div className="toolbar">
-      {this.formatButton({icon: 'format_bold', style: 'BOLD'})}
-      {this.formatButton({icon: 'format_italic', style: 'ITALIC'})}
-      {this.formatButton({icon: 'format_underlined', style: 'UNDERLINE'})}
-      {this.colorPicker()}
-      {this.formatButton({icon: 'format_list_numbered ', style: 'ordered-list-item', block: true})}
-      {this.formatButton({icon: 'format_align_left ', style: 'unstyled', block: true})}
-      {this.formatButton({icon: 'format_align_center ', style: 'center', block: true})}
-      {this.formatButton({icon: 'format_align_right ', style: 'right', block: true})}
-      {this.increaseFontSize(false)}
-      {this.increaseFontSize(true)}
-      <input
-          ref='docTitle'
-          placeholder="new document title"
-        />
-
-
-
-      </div>
-      <div className="container">
-      <div className="editbox">
-      <Editor
-      ref="editor"
-      blockRenderMap={myBlockTypes}
-      customStyleMap={this.state.inlineStyles}
-      onChange={this.onChange.bind(this)}
-      editorState={this.state.editorState}
-      />
-      </div>
-      </div>
-      </div>
+        </div>
+        <div className="container">
+          <div className="editbox">
+            <Editor
+              ref="editor"
+              blockRenderMap={myBlockTypes}
+              customStyleMap={this.state.inlineStyles}
+              onChange={this.onChange.bind(this)}
+              editorState={this.state.editorState}
+            />
+          </div>
+        </div>
+    </div>
     );
   }
 }
