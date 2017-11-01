@@ -3,8 +3,8 @@ var ReactDOM = require('react-dom');
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 // import EditText from './components/EditText';
 
-import Register from './components/Register';
-// import EditText from './components/EditText';
+// import Register from './components/Register';
+import EditText from './components/EditText';
 // import LandingPage from './components/LandingPage';
 
 /* This can check if your electron app can communicate with your backend */
@@ -23,8 +23,8 @@ class App extends React.Component {
   render() {
     return(
       <div>
-        <Register />
-        {/* <EditText /> */}
+        {/* <Register /> */}
+        <EditText />
         {/* <LandingPage /> */}
       </div>
     );
