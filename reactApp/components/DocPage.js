@@ -20,6 +20,25 @@ class DocPage extends React.Component {
 
     };
   }
+  createDoc(title) {
+    fetch('http://localhost:3000/newdocument', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({title})
+    })
+    .then(resp => resp.json())
+    .then(resp => {
+      if (resp.success) {
+        this.setState({ userDocs: this.state.userDocs.concat(resp.newDoc), error: null });
+      } else {
+        this.setState({ error: resp.error.errmsg})
+      }
+    })
+    .catch(err => { throw err });
+  }
 
 
   render() {
@@ -28,12 +47,14 @@ class DocPage extends React.Component {
     };
 
     const style = {
-      height: 700,
+      height: '94%',
       width: 600,
       margin: 20,
       textAlign: 'center',
       display: 'inline-block',
     };
+
+    console.log(this.props);
     return (
       <div className="docPage">
         <Paper style={style} zDepth={2}>
@@ -45,7 +66,7 @@ class DocPage extends React.Component {
               Document: e.target.value
             })}
           />
-          <RaisedButton label="New Doc" primary={true} style={button} /><br />
+          <RaisedButton label="New Doc" primary={true} style={button}   onClick = {() => {this.createDoc(this.state.DocumentID)}} /><br />
           <TextField
             floatingLabelText="Document ID"
             value={this.state.DocumentID}
@@ -53,7 +74,7 @@ class DocPage extends React.Component {
               DocumentID: e.target.value
             })}
           />
-          <RaisedButton label="Doc ID" primary={true} style={button} /><br />
+          <RaisedButton label="Doc ID" primary={true} style={button}  /><br />
           <div>
             <List>
               <Subheader inset={true}>Documents</Subheader>

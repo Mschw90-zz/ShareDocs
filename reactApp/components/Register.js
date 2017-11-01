@@ -40,6 +40,7 @@ class Register extends React.Component {
     };
 
     return (
+
       <div className="imgback">
         <div className="registerPage">
           <h1>HORIZON DOCS</h1>
@@ -89,5 +90,7 @@ class Register extends React.Component {
     );
   }
 }
+
+
 
 export default Register;
