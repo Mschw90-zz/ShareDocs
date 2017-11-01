@@ -16,6 +16,7 @@ class Register extends React.Component {
     };
 
     return (
+
       <div className="imgback">
         <h1 className="header2">HORIZON DOCS</h1>
         <div className="registerPage">
@@ -24,20 +25,12 @@ class Register extends React.Component {
             floatingLabelText="User Name"
           /><br />
           <TextField
-            hintText="First Name"
-            floatingLabelText="First Name"
-          /><br />
-          <TextField
-            hintText="Last Name"
-            floatingLabelText="Last Name"
-          /><br />
-          <TextField
             hintText="Password"
             floatingLabelText="Password"
             type="password"
           /><br />
           <div>
-            <RaisedButton label="Sign Up" secondary={true} style={style} />
+            <RaisedButton label="Register" secondary={true} style={style} />
             <RaisedButton label="Sign In" primary={true} style={style} />
           </div>
         </div>
@@ -45,5 +38,7 @@ class Register extends React.Component {
     );
   }
 }
+
+
 
 export default Register;
