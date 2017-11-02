@@ -1,9 +1,5 @@
 import React from 'react';
-<<<<<<< Updated upstream
 import { Editor, EditorState, RichUtils, DefaultDraftBlockRenderMap, convertFromRaw, convertToRaw } from 'draft-js';
-=======
-import { Editor, EditorState, RichUtils, DefaultDraftBlockRenderMap, convertToRaw, convertFromRaw } from 'draft-js';
->>>>>>> Stashed changes
 import * as colors from 'material-ui/styles/colors';
 import AppBar from 'material-ui/AppBar';
 import FontIcon from 'material-ui/FontIcon';
@@ -157,38 +153,38 @@ class EditText extends React.Component {
       />
     );
   }
-
-  componentDidMount() {
-    // load document content and title (owner ? register with names?)
-
-    const docId = this.props.match.params.dochash;
-
-    fetch(`http://localhost:3000/getdocument/${docId}`, {
-      credentials: 'include'
-    })
-    .then(resp => resp.json())
-    .then(resp => {
-      if (resp.success) {
-        const raw = resp.document.content;
-
-        if (raw) {
-          const contentState = convertFromRaw(JSON.parse(raw));
-          this.setState({
-            editorState: EditorState.createWithContent(contentState),
-            title: resp.document.title
-          });
-        } else {
-          this.setState({
-            title: resp.document.title
-          });
-        }
-
-      } else {
-        this.setState({ error: resp.error.errmsg});
-      }
-    })
-    .catch(err => { throw err });
-  }
+  //
+  // componentDidMount() {
+  //   // load document content and title (owner ? register with names?)
+  //
+  //   const docId = this.props.match.params.dochash;
+  //
+  //   fetch(`http://localhost:3000/getdocument/${docId}`, {
+  //     credentials: 'include'
+  //   })
+  //   .then(resp => resp.json())
+  //   .then(resp => {
+  //     if (resp.success) {
+  //       const raw = resp.document.content;
+  //
+  //       if (raw) {
+  //         const contentState = convertFromRaw(JSON.parse(raw));
+  //         this.setState({
+  //           editorState: EditorState.createWithContent(contentState),
+  //           title: resp.document.title
+  //         });
+  //       } else {
+  //         this.setState({
+  //           title: resp.document.title
+  //         });
+  //       }
+  //
+  //     } else {
+  //       this.setState({ error: resp.error.errmsg});
+  //     }
+  //   })
+  //   .catch(err => { throw err });
+  // }
   updateDoc() {
     const contentState = this.state.editorState.getCurrentContent();
     const rewContentState = convertToRaw(contentState);
@@ -207,14 +203,9 @@ class EditText extends React.Component {
     });
   }
 
-  componentWillUnmount() {
-    this.socket.disconnect();
-  }
-
 
   componentDidMount() {
     var path = this.props.location.pathname.split(':');
-    console.log(path[1])
     axios.get('http://localhost:3000/editPage/' + path[1], {})
     .then((resp) => {
       console.log(resp, '>>>>>>');
@@ -265,7 +256,7 @@ class EditText extends React.Component {
         throw resp.error;
       }
     })
-    .catch(err => { throw err });
+    .catch(err => { console.log(err); });
   }
 
 
