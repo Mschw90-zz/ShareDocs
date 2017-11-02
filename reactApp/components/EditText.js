@@ -33,12 +33,7 @@ class EditText extends React.Component {
       title: '',
       docId: '',
     };
-    // this.socket = io('http://localhost:3000');
   }
-
-
-
-
 
   onChange(editorState) {
     this.setState({
@@ -109,18 +104,18 @@ class EditText extends React.Component {
     return(
       <div style={{display: 'inline-block'}}>
       <RaisedButton
-      backgroundColor={colors.pinkA200}
-      icon={<FontIcon className="material-icons">format_paint</FontIcon>}
-      onClick={this.openColorPicker.bind(this)}
+        backgroundColor={colors.pinkA200}
+        icon={<FontIcon className="material-icons">format_paint</FontIcon>}
+        onClick={this.openColorPicker.bind(this)}
       />
       <Popover
-      open={this.state.colorPickerOpen}
-      anchorEl={this.state.colorPickerButton}
-      anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-      targetOrigin={{horizontal: 'left', vertical: 'top'}}
-      onRequestClose={this.closeColorPicker.bind(this)}
+        open={this.state.colorPickerOpen}
+        anchorEl={this.state.colorPickerButton}
+        anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+        targetOrigin={{horizontal: 'left', vertical: 'top'}}
+        onRequestClose={this.closeColorPicker.bind(this)}
       >
-      <CirclePicker onChangeComplete={this.formatColor.bind(this)} />
+        <CirclePicker onChangeComplete={this.formatColor.bind(this)} />
       </Popover>
       </div>
     );
@@ -147,44 +142,13 @@ class EditText extends React.Component {
   increaseFontSize(shrink) {
     return(
       <RaisedButton
-      backgroundColor={colors.pinkA200}
-      onClick={() => this.applyIncreaseFrontSize(shrink)}
-      icon={<FontIcon className="material-icons">{shrink ? "zoom_out": "zoom_in"}</FontIcon>}
+        backgroundColor={colors.pinkA200}
+        onClick={() => this.applyIncreaseFrontSize(shrink)}
+        icon={<FontIcon className="material-icons">{shrink ? "zoom_out": "zoom_in"}</FontIcon>}
       />
     );
   }
-  //
-  // componentDidMount() {
-  //   // load document content and title (owner ? register with names?)
-  //
-  //   const docId = this.props.match.params.dochash;
-  //
-  //   fetch(`http://localhost:3000/getdocument/${docId}`, {
-  //     credentials: 'include'
-  //   })
-  //   .then(resp => resp.json())
-  //   .then(resp => {
-  //     if (resp.success) {
-  //       const raw = resp.document.content;
-  //
-  //       if (raw) {
-  //         const contentState = convertFromRaw(JSON.parse(raw));
-  //         this.setState({
-  //           editorState: EditorState.createWithContent(contentState),
-  //           title: resp.document.title
-  //         });
-  //       } else {
-  //         this.setState({
-  //           title: resp.document.title
-  //         });
-  //       }
-  //
-  //     } else {
-  //       this.setState({ error: resp.error.errmsg});
-  //     }
-  //   })
-  //   .catch(err => { throw err });
-  // }
+
   updateDoc() {
     const contentState = this.state.editorState.getCurrentContent();
     const rewContentState = convertToRaw(contentState);
@@ -202,7 +166,6 @@ class EditText extends React.Component {
       }
     });
   }
-
 
   componentDidMount() {
     var path = this.props.location.pathname.split(':');

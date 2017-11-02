@@ -37,10 +37,12 @@ class DocPage extends React.Component {
       if (resp.success) {
         this.setState({ userDocs: this.state.userDocs.concat(resp.newDoc), error: null });
       } else {
-        this.setState({ error: resp.error.errmsg})
+        this.setState({ error: resp.error.errmsg});
       }
     })
-    .catch(err => { throw err });
+    .catch(err => {
+      console.log(err);
+    });
   }
 
   userVerif(resp) {
