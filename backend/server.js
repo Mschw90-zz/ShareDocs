@@ -6,7 +6,7 @@ const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const MongoStore = require('connect-mongo')(session);
-
+const Document = require('./models').Document;
 const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -63,7 +63,12 @@ app.use(bodyParser.json());
 app.post('/register', (req, res) => {
   console.log("make user", req.body);
 
-  const newUser = new User(req.body);
+  const newUser = new User({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    username: req.body.username,
+    password: req.body.password,
+  });
 
   newUser.save((err, result) => {
     if(err){
@@ -74,9 +79,49 @@ app.post('/register', (req, res) => {
   });
 });
 
+app.post('/makeDoc', (req, res) => {
+  const newDoc = new Document ({
+    content: '',
+    title: req.body.DocumentName,
+    owner: req.user._id,
+    password: req.body.Password
+  });
+
+  newDoc.save((err, result) => {
+    if(err){
+      res.json( { success: false, error: err } );
+    } else {
+      res.json( { success: true, doc: result });
+    }
+  });
+});
+
 app.post('/login', passport.authenticate('local'), (req, res) => {
   res.json({ success: true });
 });
+
+app.get('/docPage', (req, res) => {
+  Document.find({owner: req.user._id}, (err, docs) => {
+    if(err) {
+      console.log(err);
+      res.json({success: false});
+    }  else {
+      res.json({success: true, firstName: req.user.firstName, docs: docs});
+    }
+  });
+});
+
+app.get('/editPage/:id', (req, res) => {
+  Document.findById(req.params.id, (err, doc) => {
+    if(err) {
+      console.log(err);
+      res.json({success: false});
+    }  else {
+      res.json({success: true, firstName: req.user.firstName, doc: doc});
+    }
+  });
+});
+
 
 app.listen(3000, function () {
   console.log('Backend server for Electron App running on port 3000!');

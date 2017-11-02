@@ -2,6 +2,7 @@ import React from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import axios from 'axios';
+import Paper from 'material-ui/Paper';
 
 class Register extends React.Component {
   constructor(props) {
@@ -39,10 +40,16 @@ class Register extends React.Component {
       margin: 12,
     };
 
+    const paper = {
+      margin: 20,
+      textAlign: 'center',
+      display: 'inline-block',
+    };
+
     return (
 
       <div className="imgback">
-        <div className="registerPage">
+        <Paper style={paper} zDepth={2} className="registerPage">
           <h1>HORIZON DOCS</h1>
           <TextField
             // hintText="User Name"
@@ -85,7 +92,7 @@ class Register extends React.Component {
             <RaisedButton label="Sign Up" primary={true} style={style} onClick={() => this.register()}/>
             <RaisedButton label="Login" secondary={true} style={style} onClick={() => this.props.history.push('/')}/>
           </div>
-        </div>
+        </Paper>
       </div>
     );
   }

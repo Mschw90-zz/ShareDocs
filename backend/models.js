@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-const User = mongoose.model('User', {
+var userSchema = new Schema ({
   firstName: {
     required: true,
     type: String
@@ -20,6 +21,32 @@ const User = mongoose.model('User', {
   }
 });
 
+var documentSchema = new Schema({
+  content: {
+    type: String
+  },
+  password: {
+    type: String
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  owner: {
+    type: Schema.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  sharedWith: {
+    type: Array,
+  }
+});
+
+var User = mongoose.model('User', userSchema);
+var Document = mongoose.model('Document', documentSchema);
+
 module.exports = {
-  User: User
+  User: User,
+  Document: Document
+
 };

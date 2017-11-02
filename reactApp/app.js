@@ -9,10 +9,6 @@ import Login from './components/Login';
 import DocPage from './components/DocPage';
 
 
-
-// import LandingPage from './components/LandingPage';
-// import MyEditor from './components/MyEditor';
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -26,7 +22,7 @@ class App extends React.Component {
       <div>
         <Route path='/' exact component={Login} />
         <Route path='/register' exact component={Register} />
-        <Route path='/editText' exact component={EditText} />
+        <Route path='/editText/:id' exact component={EditText} />
         <Route path='/docPage' exact component={DocPage} />
       </div>
     );

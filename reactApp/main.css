@@ -91,15 +91,13 @@ video{
   justify-content: center;
   flex-direction: column;
   background-color: white;
-  opacity: .9;
   align-self: center;
-  /*width: 25%;*/
   padding: 10px;
 }
 
 .imgback {
   height: 100vh;
-  background-image: url('https://d2excbutktiwrq.cloudfront.net/ask-a-pro/wp-content/uploads/2014/09/iStock_000008809122_Small.jpg');
+  background-image: url('https://static1.squarespace.com/static/5471d1a1e4b006b988fa8e04/t/547cbfd0e4b0f4bc27dcbacc/1417461714116/Simple-productivity-tips1.jpg?format=1500w');
   background-size: cover;
   display: flex;
   flex-direction: column;
