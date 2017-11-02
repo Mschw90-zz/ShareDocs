@@ -158,7 +158,7 @@ class EditText extends React.Component {
   }
 
   componentDidMount() {
-    var path = this.props.location.pathname.split(':')
+    var path = this.props.location.pathname.split(':');
 
 
     axios.get('http://localhost:3000/editPage/' + path[1], {})
