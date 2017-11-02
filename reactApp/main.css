@@ -116,6 +116,7 @@ video{
   justify-content: center;
   background-image: url('https://static.pexels.com/photos/317355/pexels-photo-317355.jpeg');
   background-size: cover;
+  height: 100vh;
 }
 
 .logout{

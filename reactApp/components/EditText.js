@@ -10,6 +10,8 @@ import { Map } from 'immutable';
 import IconButton from 'material-ui/IconButton';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import FlatButton from 'material-ui/FlatButton';
+import axios from 'axios';
+
 
 const myBlockTypes = DefaultDraftBlockRenderMap.merge(new Map({
   center: {
@@ -26,7 +28,8 @@ class EditText extends React.Component {
     this.state = {
       editorState: EditorState.createEmpty(),
       currentFontSize: 12,
-      inlineStyles: {}
+      inlineStyles: {},
+      title: ''
     };
   }
 
@@ -154,14 +157,29 @@ class EditText extends React.Component {
     );
   }
 
+  componentDidMount() {
+    var path = this.props.location.pathname.split(':')
+
+
+    axios.get('http://localhost:3000/editPage/' + path[1], {})
+    .then((resp) => {
+      if(resp.data.success){
+        this.setState({
+          title: resp.data.doc.title,
+        });
+      }
+    })
+    .catch((err) => console.log('BAD', err));
+  }
+
   render() {
     return (
       <div>
         <AppBar
           iconElementLeft={<IconButton><NavigationClose /></IconButton>}
-          onLeftIconButtonTouchTap={() => this.props.history.push('/')}
+          onLeftIconButtonTouchTap={() => this.props.history.push('/docPage')}
           iconElementRight={<FlatButton label="Save" />}
-          title="May Docs"
+          title={"Document Name: " + this.state.title}
          />
         <div className="toolbar">
           {this.formatButton({icon: 'format_bold', style: 'BOLD'})}

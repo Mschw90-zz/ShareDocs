@@ -8,12 +8,6 @@ import EditText from './components/EditText';
 import Login from './components/Login';
 import DocPage from './components/DocPage';
 
-
-/* This can check if your electron app can communicate with your backend */
-// fetch('http://localhost:3000')
-// .then(resp => resp.text())
-// .then(text => console.log(text))
-// .catch(err => {throw err})
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -27,7 +21,7 @@ class App extends React.Component {
       <div>
         <Route path='/' exact component={Login} />
         <Route path='/register' exact component={Register} />
-        <Route path='/editText' exact component={EditText} />
+        <Route path='/editText/:id' exact component={EditText} />
         <Route path='/docPage' exact component={DocPage} />
       </div>
     );
