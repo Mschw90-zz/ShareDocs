@@ -122,6 +122,17 @@ app.get('/editPage/:id', (req, res) => {
   });
 });
 
+app.post('/updateDoc/:id', (req, res) => {
+  console.log(req, '^^^^^^^^^');
+  Document.findByIdAndUpdate({ _id: req.params.id }, { $set: { content: req.body.content }}, (err, result) => {
+    if(err) {
+      console.log(err);
+      res.json({success: false});
+    }  else {
+      res.json({success: true, result: result });
+    }
+  });
+});
 
 app.listen(3000, function () {
   console.log('Backend server for Electron App running on port 3000!');

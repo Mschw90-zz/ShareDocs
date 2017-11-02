@@ -30,7 +30,8 @@ class EditText extends React.Component {
       editorState: EditorState.createEmpty(),
       currentFontSize: 12,
       inlineStyles: {},
-      title: ''
+      title: '',
+      docId: '',
     };
     // this.socket = io('http://localhost:3000');
   }
@@ -152,55 +153,79 @@ class EditText extends React.Component {
       />
     );
   }
-
-
-  componentDidMount() {
-    // load document content and title (owner ? register with names?)
-
-    const docId = this.props.match.params.dochash;
-
-    fetch(`http://localhost:3000/getdocument/${docId}`, {
-      credentials: 'include'
+  //
+  // componentDidMount() {
+  //   // load document content and title (owner ? register with names?)
+  //
+  //   const docId = this.props.match.params.dochash;
+  //
+  //   fetch(`http://localhost:3000/getdocument/${docId}`, {
+  //     credentials: 'include'
+  //   })
+  //   .then(resp => resp.json())
+  //   .then(resp => {
+  //     if (resp.success) {
+  //       const raw = resp.document.content;
+  //
+  //       if (raw) {
+  //         const contentState = convertFromRaw(JSON.parse(raw));
+  //         this.setState({
+  //           editorState: EditorState.createWithContent(contentState),
+  //           title: resp.document.title
+  //         });
+  //       } else {
+  //         this.setState({
+  //           title: resp.document.title
+  //         });
+  //       }
+  //
+  //     } else {
+  //       this.setState({ error: resp.error.errmsg});
+  //     }
+  //   })
+  //   .catch(err => { throw err });
+  // }
+  updateDoc() {
+    const contentState = this.state.editorState.getCurrentContent();
+    const rewContentState = convertToRaw(contentState);
+    const stringContent = JSON.stringify(rewContentState);
+    const path = this.props.location.pathname.split(':');
+    console.log(stringContent , '?????????');
+    axios.post('http://localhost:3000/updateDoc/' + path[1], {
+      content: stringContent
     })
-    .then(resp => resp.json())
-    .then(resp => {
-      if (resp.success) {
-        const raw = resp.document.content;
-
-        if (raw) {
-          const contentState = convertFromRaw(JSON.parse(raw));
-          this.setState({
-            editorState: EditorState.createWithContent(contentState),
-            title: resp.document.title
-          });
-        } else {
-          this.setState({
-            title: resp.document.title
-          });
-        }
-
+    .then((resp) => {
+      if(resp.data.success){
+        console.log(resp, 'success');
       } else {
-        this.setState({ error: resp.error.errmsg});
+        console.log('you suck');
       }
-    })
-    .catch(err => { throw err });
-  }
-
-  componentWillUnmount() {
-    this.socket.disconnect();
+    });
   }
 
 
   componentDidMount() {
     var path = this.props.location.pathname.split(':');
-
-
     axios.get('http://localhost:3000/editPage/' + path[1], {})
     .then((resp) => {
-      if(resp.data.success){
+      console.log(resp, '>>>>>>');
+      const doc = resp.data.doc;
+      if (doc.content){
+        const rawContentState = JSON.parse(doc.content);
+        const contentState = convertFromRaw(rawContentState);
+        const newEditorState = EditorState.createWithContent(contentState);
         this.setState({
           title: resp.data.doc.title,
+          docId: resp.data.doc._id,
+          editorState: newEditorState
+
         });
+      } else {
+        this.setState({
+          title: resp.data.doc.title,
+          docId: resp.data.doc._id,
+        });
+
       }
     })
     .catch((err) => console.log('BAD', err));
@@ -231,7 +256,7 @@ class EditText extends React.Component {
         throw resp.error;
       }
     })
-    .catch(err => { throw err });
+    .catch(err => { console.log(err); });
   }
 
 
@@ -243,7 +268,7 @@ class EditText extends React.Component {
         <AppBar
           iconElementLeft={<IconButton><NavigationClose /></IconButton>}
           onLeftIconButtonTouchTap={() => this.props.history.push('/docPage')}
-          iconElementRight={<FlatButton label="Save" />}
+          iconElementRight={<FlatButton onClick={() => this.updateDoc()} label="Save" />}
           title={"Document Name: " + this.state.title}
          />
         <div className="toolbar">
@@ -260,8 +285,9 @@ class EditText extends React.Component {
           {/* {this.saveBotton({icon: 'format_save'})} */}
 
         </div>
+        <div style={{background: '#EEEEEE', fontSize: 15}}>Document ID: {this.state.docId}</div>
         <div className="container">
-          <div className="editbox">
+          <div className="editbox" onClick={() => this.refs.editor.focus()}>
             <Editor
               ref="editor"
               blockRenderMap={myBlockTypes}
