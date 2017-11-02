@@ -1,7 +1,6 @@
-var ReactDOM = require('react-dom')
 import React from 'react';
-import { render } from 'react-dom';
-import { HashRouter, Switch, Route } from 'react-router-dom';
+var ReactDOM = require('react-dom');
+import { HashRouter, Route } from 'react-router-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Register from './components/Register';
 import EditText from './components/EditText';
@@ -27,7 +26,7 @@ class App extends React.Component {
       </div>
     );
   }
-};
+}
 
 ReactDOM.render(
   <HashRouter>
@@ -35,4 +34,4 @@ ReactDOM.render(
       <App/>
     </MuiThemeProvider>
   </HashRouter>,
-   document.getElementById('root'));
+  document.getElementById('root'));
