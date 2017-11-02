@@ -1,12 +1,13 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+var ReactDOM = require('react-dom')
+import React from 'react';
+import { render } from 'react-dom';
+import { HashRouter, Switch, Route } from 'react-router-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-// import EditText from './components/EditText';
-import {Route, HashRouter} from "react-router-dom";
 import Register from './components/Register';
 import EditText from './components/EditText';
 import Login from './components/Login';
 import DocPage from './components/DocPage';
+
 
 class App extends React.Component {
   constructor(props) {
@@ -26,7 +27,7 @@ class App extends React.Component {
       </div>
     );
   }
-}
+};
 
 ReactDOM.render(
   <HashRouter>

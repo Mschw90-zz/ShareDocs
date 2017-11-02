@@ -1,5 +1,5 @@
 import React from 'react';
-import { Editor, EditorState, RichUtils, DefaultDraftBlockRenderMap } from 'draft-js';
+import { Editor, EditorState, RichUtils, DefaultDraftBlockRenderMap, convertFromRaw, convertToRaw } from 'draft-js';
 import * as colors from 'material-ui/styles/colors';
 import AppBar from 'material-ui/AppBar';
 import FontIcon from 'material-ui/FontIcon';
@@ -9,6 +9,7 @@ import Popover from 'material-ui/Popover';
 import { Map } from 'immutable';
 import IconButton from 'material-ui/IconButton';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
+
 import FlatButton from 'material-ui/FlatButton';
 import axios from 'axios';
 
@@ -31,7 +32,12 @@ class EditText extends React.Component {
       inlineStyles: {},
       title: ''
     };
+    // this.socket = io('http://localhost:3000');
   }
+
+
+
+
 
   onChange(editorState) {
     this.setState({
@@ -55,13 +61,13 @@ class EditText extends React.Component {
   formatButton({icon, style, block}) {
     return(
       <RaisedButton
-        backgroundColor={
-          this.state.editorState.getCurrentInlineStyle().has(style) ?
-          colors.pink100 :
-          colors.pinkA200
-        }
-        onMouseDown={(e) => this.toggleFormat(e,  style, block)}
-        icon={<FontIcon className="material-icons">{icon}</FontIcon>}
+      backgroundColor={
+        this.state.editorState.getCurrentInlineStyle().has(style) ?
+        colors.pink100 :
+        colors.pinkA200
+      }
+      onMouseDown={(e) => this.toggleFormat(e,  style, block)}
+      icon={<FontIcon className="material-icons">{icon}</FontIcon>}
       />
     );
   }
@@ -101,21 +107,21 @@ class EditText extends React.Component {
   colorPicker() {
     return(
       <div style={{display: 'inline-block'}}>
-        <RaisedButton
-          backgroundColor={colors.pinkA200}
-          icon={<FontIcon className="material-icons">format_paint</FontIcon>}
-          onClick={this.openColorPicker.bind(this)}
-        />
-        <Popover
-            open={this.state.colorPickerOpen}
-            anchorEl={this.state.colorPickerButton}
-            anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-            targetOrigin={{horizontal: 'left', vertical: 'top'}}
-            onRequestClose={this.closeColorPicker.bind(this)}
-            >
-            <CirclePicker onChangeComplete={this.formatColor.bind(this)} />
-        </Popover>
-    </div>
+      <RaisedButton
+      backgroundColor={colors.pinkA200}
+      icon={<FontIcon className="material-icons">format_paint</FontIcon>}
+      onClick={this.openColorPicker.bind(this)}
+      />
+      <Popover
+      open={this.state.colorPickerOpen}
+      anchorEl={this.state.colorPickerButton}
+      anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+      targetOrigin={{horizontal: 'left', vertical: 'top'}}
+      onRequestClose={this.closeColorPicker.bind(this)}
+      >
+      <CirclePicker onChangeComplete={this.formatColor.bind(this)} />
+      </Popover>
+      </div>
     );
   }
 
@@ -140,22 +146,50 @@ class EditText extends React.Component {
   increaseFontSize(shrink) {
     return(
       <RaisedButton
-        backgroundColor={colors.pinkA200}
-        onClick={() => this.applyIncreaseFrontSize(shrink)}
-        icon={<FontIcon className="material-icons">{shrink ? "zoom_out": "zoom_in"}</FontIcon>}
+      backgroundColor={colors.pinkA200}
+      onClick={() => this.applyIncreaseFrontSize(shrink)}
+      icon={<FontIcon className="material-icons">{shrink ? "zoom_out": "zoom_in"}</FontIcon>}
       />
     );
   }
 
-  saveBotton () {
-    return (
-      <RaisedButton
-        backgroundColor={colors.pinkA200}
-        // onMouseDown={(e) => this.toggleFormat(e,  style, block)}
-        icon={<FontIcon className="material-icons">save</FontIcon>}
-      />
-    );
+
+  componentDidMount() {
+    // load document content and title (owner ? register with names?)
+
+    const docId = this.props.match.params.dochash;
+
+    fetch(`http://localhost:3000/getdocument/${docId}`, {
+      credentials: 'include'
+    })
+    .then(resp => resp.json())
+    .then(resp => {
+      if (resp.success) {
+        const raw = resp.document.content;
+
+        if (raw) {
+          const contentState = convertFromRaw(JSON.parse(raw));
+          this.setState({
+            editorState: EditorState.createWithContent(contentState),
+            title: resp.document.title
+          });
+        } else {
+          this.setState({
+            title: resp.document.title
+          });
+        }
+
+      } else {
+        this.setState({ error: resp.error.errmsg});
+      }
+    })
+    .catch(err => { throw err });
   }
+
+  componentWillUnmount() {
+    this.socket.disconnect();
+  }
+
 
   componentDidMount() {
     var path = this.props.location.pathname.split(':');
@@ -171,6 +205,37 @@ class EditText extends React.Component {
     })
     .catch((err) => console.log('BAD', err));
   }
+
+
+  saveDoc() {
+    const contentState = this.state.editorState.getCurrentContent();
+    const stringifiedContent = JSON.stringify(convertToRaw(contentState));
+    const docId = this.props.match.params.dochash;
+
+    console.log('MADE IT');
+
+    console.log('this is the docId', docId);
+    fetch(`http://localhost:3000/savedocument/${docId}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ content: stringifiedContent })
+    })
+    .then(resp => resp.json())
+    .then(resp => {
+      if (resp.success) {
+        // successful save
+      } else {
+        throw resp.error;
+      }
+    })
+    .catch(err => { throw err });
+  }
+
+
+
 
   render() {
     return (

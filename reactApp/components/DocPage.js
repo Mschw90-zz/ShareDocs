@@ -25,6 +25,25 @@ class DocPage extends React.Component {
       Documents: []
     };
   }
+  createDoc(title) {
+    fetch('http://localhost:3000/newdocument', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({title})
+    })
+    .then(resp => resp.json())
+    .then(resp => {
+      if (resp.success) {
+        this.setState({ userDocs: this.state.userDocs.concat(resp.newDoc), error: null });
+      } else {
+        this.setState({ error: resp.error.errmsg})
+      }
+    })
+    .catch(err => { throw err });
+  }
 
   userVerif(resp) {
     if(resp.data.success){
@@ -75,13 +94,16 @@ class DocPage extends React.Component {
     };
 
     const style = {
+
       minHeight: '94%',
       flex: 1,
       maxWidth: 600,
+
       margin: 20,
       textAlign: 'center',
       display: 'inline-block',
     };
+
 
     const actions = [
       <FlatButton
@@ -122,7 +144,9 @@ class DocPage extends React.Component {
               Password: e.target.value
             })}
           />
+
         </Dialog><br />
+
           <TextField
             floatingLabelText="Document ID"
             value={this.state.DocumentID}
@@ -130,7 +154,7 @@ class DocPage extends React.Component {
               DocumentID: e.target.value
             })}
           />
-          <RaisedButton label="Doc ID" primary={true} style={button} /><br />
+          <RaisedButton label="Doc ID" primary={true} style={button}  /><br />
           <div>
             <List>
               <Subheader inset={true}>Documents</Subheader>
