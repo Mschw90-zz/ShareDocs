@@ -4,14 +4,12 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
 import {List, ListItem} from 'material-ui/List';
 import Divider from 'material-ui/Divider';
-import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
 import ActionAssignment from 'material-ui/svg-icons/action/assignment';
 import {blue500} from 'material-ui/styles/colors';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import axios from 'axios';
-
 
 class DocPage extends React.Component {
   constructor(props) {
@@ -154,23 +152,24 @@ class DocPage extends React.Component {
               DocumentID: e.target.value
             })}
           />
-          <RaisedButton label="Doc ID" primary={true} style={button}  /><br />
-          <div>
+          <RaisedButton label="Doc ID" primary={true} style={button} /><br />
+          <h3>Documents</h3>
+          <div style={{overflowY: "scroll", maxHeight: "270px"}}>
             <List>
-              <Subheader inset={true}>Documents</Subheader>
-              {this.state.Documents.map((doc) => {
-                return (
-                  <div>
-                    <Divider />
-                    <ListItem
-                      leftAvatar={<Avatar icon={<ActionAssignment />} backgroundColor={blue500} />}
-                      primaryText={doc.title}
-                      onClick={() => this.props.history.push(`/editText/:${doc._id}`)}
-                    />
-                    <Divider />
-                  </div>
-                );
-              })}
+                {this.state.Documents.map((doc) => {
+                  return (
+                    <div>
+                      <Divider />
+                      <ListItem
+                        style={{paddingRight: "60px"}}
+                        leftAvatar={<Avatar icon={<ActionAssignment />} backgroundColor={blue500} />}
+                        primaryText={doc.title}
+                        onClick={() => this.props.history.push(`/editText/:${doc._id}`)}
+                      />
+                      <Divider />
+                    </div>
+                  );
+                })}
             </List>
           </div>
         </Paper>
