@@ -8,6 +8,8 @@ const LocalStrategy = require('passport-local');
 const MongoStore = require('connect-mongo')(session);
 const Document = require('./models').Document;
 const mongoose = require('mongoose');
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 mongoose.connect(process.env.MONGODB_URI);
 
 
@@ -54,10 +56,6 @@ passport.use(new LocalStrategy(function(username, password, done) {
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
-
-
 app.use(bodyParser.json());
 
 app.post('/register', (req, res) => {
@@ -84,7 +82,8 @@ app.post('/makeDoc', (req, res) => {
     content: '',
     title: req.body.DocumentName,
     owner: req.user._id,
-    password: req.body.Password
+    password: req.body.Password,
+    sharedWith: [req.user._id]
   });
 
   newDoc.save((err, result) => {
@@ -101,7 +100,7 @@ app.post('/login', passport.authenticate('local'), (req, res) => {
 });
 
 app.get('/docPage', (req, res) => {
-  Document.find({owner: req.user._id}, (err, docs) => {
+  Document.find({sharedWith: req.user._id}, (err, docs) => {
     if(err) {
       console.log(err);
       res.json({success: false});
@@ -123,7 +122,6 @@ app.get('/editPage/:id', (req, res) => {
 });
 
 app.post('/updateDoc/:id', (req, res) => {
-  console.log(req, '^^^^^^^^^');
   Document.findByIdAndUpdate({ _id: req.params.id }, { $set: { content: req.body.content }}, (err, result) => {
     if(err) {
       console.log(err);
@@ -134,6 +132,24 @@ app.post('/updateDoc/:id', (req, res) => {
   });
 });
 
-app.listen(3000, function () {
+app.post('/saveById', (req, res) => {
+  Document.findByIdAndUpdate({_id: req.body.DocId}, {"$push": {sharedWith: req.user._id}}, (err,result) => {
+    if(err) {
+      console.log(err);
+      res.json({success: false});
+    } else {
+      res.json({success: true, document: result});
+    }
+  });
+});
+
+io.on('connection', function(socket){
+  console.log('a user connected');
+  socket.on('change', (data) => {
+    socket.broadcast.emit('globalChange', data);
+  });
+});
+
+server.listen(3000, function () {
   console.log('Backend server for Electron App running on port 3000!');
 });

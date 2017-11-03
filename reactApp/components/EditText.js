@@ -9,9 +9,9 @@ import Popover from 'material-ui/Popover';
 import { Map } from 'immutable';
 import IconButton from 'material-ui/IconButton';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
-
 import FlatButton from 'material-ui/FlatButton';
 import axios from 'axios';
+import io from 'socket.io-client';
 
 
 const myBlockTypes = DefaultDraftBlockRenderMap.merge(new Map({
@@ -36,6 +36,9 @@ class EditText extends React.Component {
   }
 
   onChange(editorState) {
+    const contentState = editorState.getCurrentContent();
+    const stringContent = JSON.stringify(convertToRaw(contentState));
+    this.socket.emit('change', stringContent);
     this.setState({
       editorState
     });
@@ -87,7 +90,6 @@ class EditText extends React.Component {
   }
 
   openColorPicker(e) {
-
     this.setState({
       colorPickerOpen: true,
       colorPickerButton: e.target
@@ -168,6 +170,18 @@ class EditText extends React.Component {
   }
 
   componentDidMount() {
+    this.socket = io('http://localhost:3000/');
+    this.socket.on('connect', () => {
+      console.log('connected');
+    });
+    this.socket.on('globalChange', (data) => {
+      const rawContentState = JSON.parse(data);
+      const contentState = convertFromRaw(rawContentState);
+      const newEditorState = EditorState.createWithContent(contentState);
+      this.setState({
+        editorState: newEditorState
+      });
+    });
     var path = this.props.location.pathname.split(':');
     axios.get('http://localhost:3000/editPage/' + path[1], {})
     .then((resp) => {
@@ -181,7 +195,6 @@ class EditText extends React.Component {
           title: resp.data.doc.title,
           docId: resp.data.doc._id,
           editorState: newEditorState
-
         });
       } else {
         this.setState({
