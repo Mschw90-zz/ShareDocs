@@ -8,10 +8,15 @@ import { CirclePicker } from 'react-color';
 import Popover from 'material-ui/Popover';
 import { Map } from 'immutable';
 import IconButton from 'material-ui/IconButton';
-import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import IconMenu from 'material-ui/IconMenu';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import MenuItem from 'material-ui/MenuItem';
 import FlatButton from 'material-ui/FlatButton';
 import axios from 'axios';
 import io from 'socket.io-client';
+import Dialog from 'material-ui/Dialog';
+import TextField from 'material-ui/TextField';
+
 
 
 const myBlockTypes = DefaultDraftBlockRenderMap.merge(new Map({
@@ -32,6 +37,7 @@ class EditText extends React.Component {
       inlineStyles: {},
       title: '',
       docId: '',
+      open: false,
     };
   }
 
@@ -42,6 +48,14 @@ class EditText extends React.Component {
     this.setState({
       editorState
     });
+  }
+
+  handleOpen() {
+    this.setState({open: true});
+  }
+
+  handleClose() {
+    this.setState({open: false});
   }
 
   toggleFormat(e, style, block) {
@@ -158,7 +172,8 @@ class EditText extends React.Component {
     const path = this.props.location.pathname.split(':');
     console.log(stringContent , '?????????');
     axios.post('http://localhost:3000/updateDoc/' + path[1], {
-      content: stringContent
+      content: stringContent,
+      title: this.state.title
     })
     .then((resp) => {
       if(resp.data.success){
@@ -208,42 +223,67 @@ class EditText extends React.Component {
   }
 
 
-  saveDoc() {
-    const contentState = this.state.editorState.getCurrentContent();
-    const stringifiedContent = JSON.stringify(convertToRaw(contentState));
-    const docId = this.props.match.params.dochash;
-
-    console.log('MADE IT');
-
-    console.log('this is the docId', docId);
-    fetch(`http://localhost:3000/savedocument/${docId}`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ content: stringifiedContent })
-    })
-    .then(resp => resp.json())
-    .then(resp => {
-      if (resp.success) {
-        // successful save
-      } else {
-        throw resp.error;
-      }
-    })
-    .catch(err => { console.log(err); });
-  }
+  // saveDoc() {
+  //   const contentState = this.state.editorState.getCurrentContent();
+  //   const stringifiedContent = JSON.stringify(convertToRaw(contentState));
+  //   const docId = this.props.match.params.dochash;
+  //
+  //   console.log('MADE IT');
+  //
+  //   console.log('this is the docId', docId);
+  //   fetch(`http://localhost:3000/savedocument/${docId}`, {
+  //     method: 'POST',
+  //     credentials: 'include',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify({ content: stringifiedContent, title: this.state.title })
+  //   })
+  //   .then(resp => resp.json())
+  //   .then(resp => {
+  //     if (resp.success) {
+  //       // successful save
+  //     } else {
+  //       throw resp.error;
+  //     }
+  //   })
+  //   .catch(err => { console.log(err); });
+  // }
 
 
 
 
   render() {
+
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+        onClick={this.handleClose.bind(this)}
+      />,
+      <FlatButton
+        label="Submit"
+        primary={true}
+        onClick={this.handleClose.bind(this)}
+      />,
+    ];
+
     return (
       <div>
         <AppBar
-          iconElementLeft={<IconButton><NavigationClose /></IconButton>}
-          onLeftIconButtonTouchTap={() => this.props.history.push('/docPage')}
+          // iconElementLeft={<IconButton><NavigationClose /></IconButton>}
+          // onLeftIconButtonTouchTap={() => this.props.history.push('/docPage')}
+          iconElementLeft={
+            <IconMenu
+              iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
+              anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+              targetOrigin={{horizontal: 'left', vertical: 'top'}}
+            >
+              <MenuItem primaryText="Back to Documents"  onClick={() => this.props.history.push('/docPage')} />
+              <MenuItem primaryText="Change Title" onClick={this.handleOpen.bind(this)} />
+              <MenuItem primaryText="Sign out" onClick={() => this.props.history.push('/')} />
+            </IconMenu>}
+
           iconElementRight={<FlatButton onClick={() => this.updateDoc()} label="Save" />}
           title={"Document Name: " + this.state.title}
          />
@@ -263,6 +303,20 @@ class EditText extends React.Component {
         </div>
         <div style={{background: '#EEEEEE', fontSize: 15}}>Document ID: {this.state.docId}</div>
         <div className="container">
+          <Dialog
+             title="Change Title"
+             actions={actions}
+             modal={true}
+             open={this.state.open}
+           >
+             <TextField
+               floatingLabelText="New Title"
+               value={this.state.title}
+               onChange={(e) => this.setState({
+                 title: e.target.value
+               })}
+             /><br />
+           </Dialog>
           <div className="editbox" onClick={() => this.refs.editor.focus()}>
             <Editor
               ref="editor"
