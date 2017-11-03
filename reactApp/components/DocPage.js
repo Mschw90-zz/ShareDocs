@@ -23,6 +23,7 @@ class DocPage extends React.Component {
       Documents: []
     };
   }
+
   createDoc(title) {
     fetch('http://localhost:3000/newdocument', {
       method: 'POST',
@@ -80,6 +81,23 @@ class DocPage extends React.Component {
       if (resp.data.success) {
         this.props.history.push(`/editText/:${resp.data.doc._id}`);
         console.log("success!");
+      } else {
+        console.log(resp.data.error);
+      }
+    })
+    .catch((err) => console.log(err));
+  }
+
+
+  saveById(){
+    axios.post('http://localhost:3000/saveById', {DocId: this.state.DocumentID})
+    .then((resp) => {
+      if (resp.data.success) {
+        console.log("success!");
+        this.setState({
+          Documents: [...this.state.Documents, resp.data.document],
+          DocumentID: ''
+        });
       } else {
         console.log(resp.data.error);
       }
@@ -153,8 +171,9 @@ class DocPage extends React.Component {
             onChange={(e) => this.setState({
               DocumentID: e.target.value
             })}
+
           />
-          <RaisedButton label="Doc ID" primary={true} style={button} /><br />
+          <RaisedButton label="Doc ID" onClick={() => this.saveById()} primary={true} style={button} /><br />
           <h3>Documents</h3>
           <div style={{overflowY: "scroll", maxHeight: "270px"}}>
             <List>
