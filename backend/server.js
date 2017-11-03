@@ -122,7 +122,7 @@ app.get('/editPage/:id', (req, res) => {
 });
 
 app.post('/updateDoc/:id', (req, res) => {
-  Document.findByIdAndUpdate({ _id: req.params.id }, { $set: { content: req.body.content }}, (err, result) => {
+  Document.findByIdAndUpdate({ _id: req.params.id }, { $set: { content: req.body.content, title: req.body.title }}, (err, result) => {
     if(err) {
       console.log(err);
       res.json({success: false});
